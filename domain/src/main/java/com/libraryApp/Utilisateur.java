@@ -14,13 +14,12 @@ public class Utilisateur {
     }
 
     public boolean emprunter(Document doc){
-
-        if (documentsEmpruntes.contains(doc)){
-            return false;
+        if (doc.isEstDisponible()) {
+            doc.setEstDisponible(false); // On le marque comme indisponible
+            documentsEmpruntes.add(doc); // On l'ajoute à la liste de l'utilisateur
+            return true;
         }
-        documentsEmpruntes.add(doc);
-        return true;
-
+        return false;
     }
 
     public String getNom() {

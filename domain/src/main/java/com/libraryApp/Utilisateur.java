@@ -21,6 +21,17 @@ public class Utilisateur {
         documentsEmpruntes.add(doc);
         return true;
 
+    }
 
+    public String getNom() {
+        return Nom;
+    }
+
+    public void setNom(String nom) {
+        Nom = nom;
+    }
+
+    public List<Document> getDocumentsEmpruntes() {
+        return documentsEmpruntes;
     }
 }

@@ -1,6 +1,12 @@
 package com.libraryApp;
 
+import jakarta.persistence.*;
+
+@Entity
+@Inheritance(strategy = InheritanceType.JOINED)
 public class Document {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     private String titre;
     private boolean estDisponible;
@@ -8,6 +14,10 @@ public class Document {
     public Document(String titre){
         this.estDisponible = true;
         this.titre = titre;
+
+    }
+
+    public Document() {
 
     }
 

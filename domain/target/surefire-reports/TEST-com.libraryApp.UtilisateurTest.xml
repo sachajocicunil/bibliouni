@@ -12,7 +12,7 @@
     <property name="user.country" value="US"/>
     <property name="sun.java.launcher" value="SUN_STANDARD"/>
     <property name="sun.boot.library.path" value="/Users/jocicsacha/Library/Java/JavaVirtualMachines/ms-17.0.16/Contents/Home/lib"/>
-    <property name="sun.java.command" value="/Users/jocicsacha/Documents/bibliouni/domain/target/surefire/surefirebooter-20251225134743269_3.jar /Users/jocicsacha/Documents/bibliouni/domain/target/surefire 2025-12-25T13-47-42_556-jvmRun1 surefire-20251225134743269_1tmp surefire_0-20251225134743269_2tmp"/>
+    <property name="sun.java.command" value="/Users/jocicsacha/Documents/bibliouni/domain/target/surefire/surefirebooter-20251225140940041_3.jar /Users/jocicsacha/Documents/bibliouni/domain/target/surefire 2025-12-25T14-09-40_007-jvmRun1 surefire-20251225140940041_1tmp surefire_0-20251225140940041_2tmp"/>
     <property name="jdk.debug" value="release"/>
     <property name="surefire.test.class.path" value="/Users/jocicsacha/Documents/bibliouni/domain/target/test-classes:/Users/jocicsacha/Documents/bibliouni/domain/target/classes:/Users/jocicsacha/.m2/repository/junit/junit/4.12/junit-4.12.jar:/Users/jocicsacha/.m2/repository/org/hamcrest/hamcrest-core/1.3/hamcrest-core-1.3.jar:"/>
     <property name="sun.cpu.endian" value="little"/>
@@ -28,7 +28,7 @@
     <property name="line.separator" value="&#10;"/>
     <property name="java.vm.specification.vendor" value="Oracle Corporation"/>
     <property name="java.specification.name" value="Java Platform API Specification"/>
-    <property name="surefire.real.class.path" value="/Users/jocicsacha/Documents/bibliouni/domain/target/surefire/surefirebooter-20251225134743269_3.jar"/>
+    <property name="surefire.real.class.path" value="/Users/jocicsacha/Documents/bibliouni/domain/target/surefire/surefirebooter-20251225140940041_3.jar"/>
     <property name="sun.management.compiler" value="HotSpot 64-Bit Tiered Compilers"/>
     <property name="java.runtime.version" value="17.0.16+8-LTS"/>
     <property name="user.name" value="jocicsacha"/>

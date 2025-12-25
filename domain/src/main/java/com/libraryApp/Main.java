@@ -5,6 +5,5 @@ package com.libraryApp;
 public class Main {
     public static void main(String[] args) {
         System.out.println("hello");
-        UtilisateurTest test1 = new UtilisateurTest();
     }
 }

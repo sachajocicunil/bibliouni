@@ -27,6 +27,9 @@ public class UtilisateurTest {
         
         // Tentative d'emprunt par u2 (doit échouer)
         assertFalse(u2.emprunter(l1));
+
     }
+
+
 
 }

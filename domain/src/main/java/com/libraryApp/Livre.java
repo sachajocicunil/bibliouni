@@ -8,10 +8,10 @@ import java.io.Serializable;
 @Entity
 @NamedQuery(name="Livre.findByAuteur", query="SELECT l FROM Livre l WHERE l.auteur = :auteur")
 public class Livre extends Document implements Serializable {
-    private String Auteur;
-    public Livre(String titre, String Auteur){
+    private String auteur;
+    public Livre(String titre, String auteur){
         super(titre);
-        this.Auteur=Auteur;
+        this.auteur = auteur;
     }
 
     public Livre() {
@@ -19,11 +19,11 @@ public class Livre extends Document implements Serializable {
     }
 
     public String getAuteur() {
-        return Auteur;
+        return auteur;
     }
 
     public void setAuteur(String auteur) {
-        Auteur = auteur;
+        this.auteur = auteur;
     }
 
     private boolean estDisponible = true;

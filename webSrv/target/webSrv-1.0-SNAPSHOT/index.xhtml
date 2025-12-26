@@ -13,16 +13,20 @@
     <h:dataTable value="#{bibliothequeBean.livres}" var="livre" border="1">
 
         <h:column>
-            <f:facet name="header">Titre</f:facet> <h:outputText value="#{livre.titre}" /> </h:column>
+            <p>#{livre.titre}</p>
+        </h:column>
+
+ <!--       <h:column>
+            <f:facet name="header">Titre</f:facet>
+            <h:outputText value="#{livre.titre}" />
+        </h:column>
 
         <h:column>
             <f:facet name="header">Auteur</f:facet>
-            <h:outputText value="#{livre.auteur}" /> </h:column>
+            <h:outputText value="#{livre.auteur}" />
+        </h:column>-->
 
-        <h:column>
-            <f:facet name="header">Disponibilité</f:facet>
-            <h:outputText value="#{livre.estDisponible ? 'Disponible' : 'Emprunté'}" />
-        </h:column>
+
 
     </h:dataTable>
 </h:body>

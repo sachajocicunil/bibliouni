@@ -17,62 +17,7 @@ Une application Java EE sépare les choses en **couches responsabilités**. Imag
 3.  **Le Modèle (Entités)** : Ce sont les ingrédients (`Livre`, `Utilisateur`). Ils représentent les données réelles.
 4.  **La Persistance (Base de Données)** : C'est le frigo. On y stocke les ingrédients pour qu'ils ne disparaissent pas quand on éteint la lumière.
 
-
-```mermaid
-graph TD
-    %% --- ACTEURS ---
-    User((Utilisateur Humain))
-    Robot((Client API / Robot))
-
-    %% --- CLIENTS ---
-    Browser[Navigateur Web<br/>(Visualisation JSF)]
-    MobileApp[App Mobile / Script]
-
-    %% --- SERVEUR JAVA EE (WILDFLY) ---
-    subgraph "Serveur d'Application (WildFly)"
-        direction TB
-
-        %% Configuration & Init
-        Config[RestConfig<br/>(Config JAX-RS)]
-        Init[DataInit<br/>(Données de Démarrage)]
-
-        %% Controller Layer
-        WC[WebController<br/>(Gestion Affichage)]
-        API[RestApi<br/>(Point d'entrée JSON)]
-
-        %% Service Layer
-        Service[LibraryService<br/>(Logique Métier Centralisée)]
-
-        %% Model / Entities Layer
-        subgraph "Modèle de Données (JPA)"
-            Doc[Document<br/>(Abstrait)]
-            Livre[Livre<br/>(Concret)]
-            Util[Utilisateur]
-            
-            Livre -- Hérite de --> Doc
-            Doc "0..*" -- "Emprunté par" --> "0..1" Util
-        end
-    end
-
-    %% --- BASE DE DONNÉES ---
-    DB[(Base de Données<br/>H2 Memory)]
-
-    %% --- FLUX D'INTERACTION ---
-    User -->|1. Clique| Browser
-    Browser -->|2. Envoie Formulaire HTTP| WC
-    Robot -->|1. Requête JSON| MobileApp
-    MobileApp -->|2. GET/POST| API
-
-    WC -->|3. Appelle| Service
-    API -->|3. Appelle| Service
-
-    Service -->|4. Cherche/Modifie| Doc
-    Service -->|4. Cherche/Modifie| Util
-    Service -->|5. Persiste (EntityManager)| DB
-
-    Init -.->|Initialise au démarrage| Service
-    Config -.->|Définit l'URL| API
-```
+![alt text](image.png)
 
 ---
 

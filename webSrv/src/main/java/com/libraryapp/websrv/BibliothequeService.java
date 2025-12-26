@@ -1,49 +1,46 @@
 package com.libraryapp.websrv;
 
 import com.libraryApp.Livre;
-import jakarta.ws.rs.GET;
-import jakarta.ws.rs.Path;
-import jakarta.ws.rs.PathParam;
-import jakarta.ws.rs.Produces;
+import com.libraryApp.LivreService;
+import jakarta.inject.Inject;
+import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
-
-import java.util.ArrayList;
 import java.util.List;
 
 @Path("/bibliotheque")
 public class BibliothequeService {
 
-    List<Livre> listeDeLivre = new ArrayList<>();
-    Livre l1 = new Livre("belloboidormant","sacha");
-    Livre l2 = new Livre("papiquidort","kaaris");
-
-    public BibliothequeService() {
-        listeDeLivre.add(l1);
-        listeDeLivre.add(l2);
-    }
-    
-    @GET
-    @Produces(MediaType.APPLICATION_JSON) // On renvoie du JSON
-    public List<Livre> getLivres() {
-        return listeDeLivre;
-    }
+    @Inject
+    private LivreService livreService;
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    @Path("/{titre}")
-    public Livre getLivreParTitre (@PathParam("titre") String titre){
-        for (Livre livre : listeDeLivre) {
-            if (livre.getTitre().equalsIgnoreCase(titre)) {
-                return livre;
-            }
-        }
-        return null;
+    public List<Livre> getLivres() {
+        return livreService.lister();
     }
 
+    @GET
+    @Path("/{id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Livre getLivre(@PathParam("id") int id) {
+        return livreService.trouver(id);
+    }
 
+    @POST
+    @Consumes(MediaType.APPLICATION_JSON)
+    public void ajouterLivre(Livre livre) {
+        livreService.ajouter(livre);
+    }
 
+    @PUT
+    @Consumes(MediaType.APPLICATION_JSON)
+    public void modifierLivre(Livre livre) {
+        livreService.modifier(livre);
+    }
 
-
-
-
+    @DELETE
+    @Path("/{id}")
+    public void supprimerLivre(@PathParam("id") int id) {
+        livreService.supprimer(id);
+    }
 }

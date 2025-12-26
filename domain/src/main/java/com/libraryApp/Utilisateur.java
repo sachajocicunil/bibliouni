@@ -1,36 +1,63 @@
 package com.libraryApp;
 
+import jakarta.persistence.*;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Utilisateur {
-    private String Nom;
-    private List<Document> documentsEmpruntes;
-    private int Id;
+@Entity
+public class Utilisateur implements Serializable {
 
-    public Utilisateur(String Nom){
-        this.Nom = Nom;
-        this.documentsEmpruntes= new ArrayList<Document>();
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private int id;
+
+    private String nom;
+
+    @OneToMany(mappedBy = "emprunteur", fetch = FetchType.EAGER)
+    private List<Document> documentsEmpruntes;
+
+    public Utilisateur() {
+        this.documentsEmpruntes = new ArrayList<>();
     }
 
-    public boolean emprunter(Document doc){
+    public Utilisateur(String nom) {
+        this.nom = nom;
+        this.documentsEmpruntes = new ArrayList<>();
+    }
+
+    public boolean emprunter(Document doc) {
         if (doc.isEstDisponible()) {
             doc.setEstDisponible(false); // On le marque comme indisponible
-            documentsEmpruntes.add(doc); // On l'ajoute à la liste de l'utilisateur
+            doc.setEmprunteur(this); // On lie le document à l'utilisateur
+            // documentsEmpruntes.add(doc); // Pas nécessaire de l'ajouter manuellement si
+            // on gère bien la relation, mais pour l'objet en mémoire c'est mieux
             return true;
         }
         return false;
     }
 
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
     public String getNom() {
-        return Nom;
+        return nom;
     }
 
     public void setNom(String nom) {
-        Nom = nom;
+        this.nom = nom;
     }
 
     public List<Document> getDocumentsEmpruntes() {
         return documentsEmpruntes;
+    }
+
+    public void setDocumentsEmpruntes(List<Document> documentsEmpruntes) {
+        this.documentsEmpruntes = documentsEmpruntes;
     }
 }

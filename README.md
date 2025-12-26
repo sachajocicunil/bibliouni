@@ -13,10 +13,66 @@ Si vous êtes débutant, ce document est fait pour vous. Nous allons décortique
 Une application Java EE sépare les choses en **couches responsabilités**. Imaginez un restaurant :
 
 1.  **La Vue (Présentation)** : C'est la salle du restaurant et le menu (`index.xhtml`). Le client (l'utilisateur) interagit ici.
-2.  **Le Contrôleur (Backing Bean)** : C'est le serveur (`BibliothequeBean`). Il prend votre commande (vos clics) et la transmet à la cuisine.
-3.  **Le Service (Métier)** : C'est le chef en cuisine (`LivreService`). Il sait comment cuisiner (les règles de gestion : on ne peut pas emprunter un livre déjà pris).
-4.  **Le Modèle (Entités)** : Ce sont les ingrédients (`Livre`, `Utilisateur`). Ils représentent les données réelles.
-5.  **La Persistance (Base de Données)** : C'est le frigo. On y stocke les ingrédients pour qu'ils ne disparaissent pas quand on éteint la lumière.
+2.  **Le Contrôleur (WebController)** : C'est le serveur ET le chef cuisinier. Il prend votre commande, la traite, et interagit directement avec le frigo (Base de Données).
+3.  **Le Modèle (Entités)** : Ce sont les ingrédients (`Livre`, `Utilisateur`). Ils représentent les données réelles.
+4.  **La Persistance (Base de Données)** : C'est le frigo. On y stocke les ingrédients pour qu'ils ne disparaissent pas quand on éteint la lumière.
+
+
+```mermaid
+graph TD
+    %% --- ACTEURS ---
+    User((Utilisateur Humain))
+    Robot((Client API / Robot))
+
+    %% --- CLIENTS ---
+    Browser[Navigateur Web<br/>(Visualisation JSF)]
+    MobileApp[App Mobile / Script]
+
+    %% --- SERVEUR JAVA EE (WILDFLY) ---
+    subgraph "Serveur d'Application (WildFly)"
+        direction TB
+
+        %% Configuration & Init
+        Config[RestConfig<br/>(Config JAX-RS)]
+        Init[DataInit<br/>(Données de Démarrage)]
+
+        %% Controller Layer
+        WC[WebController<br/>(Gestion Affichage)]
+        API[RestApi<br/>(Point d'entrée JSON)]
+
+        %% Service Layer
+        Service[LibraryService<br/>(Logique Métier Centralisée)]
+
+        %% Model / Entities Layer
+        subgraph "Modèle de Données (JPA)"
+            Doc[Document<br/>(Abstrait)]
+            Livre[Livre<br/>(Concret)]
+            Util[Utilisateur]
+            
+            Livre -- Hérite de --> Doc
+            Doc "0..*" -- "Emprunté par" --> "0..1" Util
+        end
+    end
+
+    %% --- BASE DE DONNÉES ---
+    DB[(Base de Données<br/>H2 Memory)]
+
+    %% --- FLUX D'INTERACTION ---
+    User -->|1. Clique| Browser
+    Browser -->|2. Envoie Formulaire HTTP| WC
+    Robot -->|1. Requête JSON| MobileApp
+    MobileApp -->|2. GET/POST| API
+
+    WC -->|3. Appelle| Service
+    API -->|3. Appelle| Service
+
+    Service -->|4. Cherche/Modifie| Doc
+    Service -->|4. Cherche/Modifie| Util
+    Service -->|5. Persiste (EntityManager)| DB
+
+    Init -.->|Initialise au démarrage| Service
+    Config -.->|Définit l'URL| API
+```
 
 ---
 
@@ -41,41 +97,26 @@ Ce sont de simples classes Java (POJO) qui représentent les objets de la vie r�
     *   **C'est quoi ?** : La personne qui emprunte.
     *   **Le lien magique** : Regardez `List<Document> documentsEmpruntes`. C'est une relation **One-To-Many** (Un-à-Plusieurs). Un utilisateur peut avoir *plusieurs* documents. Java gère ce lien complexe pour vous.
 
-### 2. Les Cuisiniers (Les Services / EJB)
+### 2. Cerveau (Logique & Contrôle)
+- **`com.libraryapp.websrv.LibraryService`** : *"Le Chef Cuisinier"*.
+  - C'est lui qui fait tout le travail difficile (parler à la base de données, vérifier les emprunts).
+  - Il est utilisé par le site web ET par l'API.
+- **`com.libraryapp.websrv.WebController`** : *"Le Serveur du Restaurant"*.
+  - Il prend les commandes des clients (formulaires HTML) et les passe au Chef (Service).
+  - Il ne touche jamais directement aux ingrédients (Base de données).
+- **`com.libraryapp.websrv.RestApi`** : *"Le Drive"*.
+  - Pour les robots ou applications mobiles. Il reçoit des commandes JSON et demande aussi au Chef.
 
-Ici, c'est le "Cerveau" de l'application. On utilise des **EJB (Enterprise JavaBeans)**. Ce sont des classes que le serveur "gère" pour vous (il s'occupe de la sécurité, des transactions, etc.).
+### 3. L'API (Pour les Robots / RestApi)
 
-*   **`LivreService.java`**
-    *   **Son rôle** : C'est le gestionnaire des livres.
-    *   **Ses outils** : Il utilise un `EntityManager` (le gestionnaire d'entités). C'est l'intendant qui a la clé du "frigo" (la base de données).
-    *   **Actions** :
-        *   `ajouter(Livre)` : Dit à l'intendant "Garde ce nouveau livre".
-        *   `trouver(id)` : Dit à l'intendant "Va me chercher le livre n°12".
-        *   `emprunter(...)` : C'est ici que la magie opère. Il récupère le livre et l'utilisateur, et connecte les deux.
+*   **`RestApi.java`**
+    *   **C'est quoi ?** : Une porte d'entrée pour les programmes.
+    *   **Rôle** : Elle permet de récupérer la liste des livres en format JSON via une adresse web.
 
-*   **`UtilisateurService.java`**
-    *   **Son rôle** : Pareil, mais pour gérer les inscrits à la bibliothèque.
+### 4. Le Démarrage (DataInit)
 
-*   **`DatabaseInitializer.java`**
-    *   **C'est quoi ?** : Un script de démarrage automatique.
-    *   **Annotations** : `@Singleton` (il n'y en a qu'un seul) et `@Startup` (lance-toi dès le début).
-    *   **Utilité** : Si la base de données est vide au lancement, il crée automatiquement 4 livres (Le Petit Prince, 1984...). Super pratique pour tester sans devoir tout ressaisir à la main !
-
-### 3. Le Serveur (Le Contrôleur / Beans)
-
-*   **`BibliothequeBean.java`**
-    *   **Son rôle** : Faire le lien entre votre page Web et le code Java.
-    *   **Annotations** : 
-        *   `@Named` : Permet d'utiliser ce nom (`bibliothequeBean`) directement dans le fichier HTML/XHTML.
-        *   `@RequestScoped` : Une nouvelle instance est créée à chaque fois qu'un utilisateur clique ou charge une page.
-    *   **Fonctionnement** : Quand vous remplissez le formulaire "Ajouter un livre" sur la page web, les données arrivent ici. Quand vous cliquez sur "Valider", la méthode `ajouterLivre()` d'ici est appelée, qui appelle à son tour le `LivreService`.
-
-### 4. L'API (Pour les Robots)
-
-*   **`BibliothequeService.java` (dans le package `websrv`)**
-    *   **C'est quoi ?** : Une **API REST**.
-    *   **A quoi ça sert ?** : Si demain vous voulez créer une application mobile iPhone pour voter bibliothèque, elle ne pourra pas "voir" la page web. Elle discutera avec ce fichier.
-    *   **Langage** : Elle parle en **JSON** (texte structuré). Si vous allez sur l'URL de ce service, vous verrez la liste des livres en format texte brut, facile à lire pour un programme.
+*   **`DataInit.java`**
+    *   **Mission** : Remplir la bibliothèque si elle est vide au lancement du serveur. Pratique pour ne pas tester avec une page blanche.
 
 ---
 
@@ -108,9 +149,7 @@ Au lieu de lancer le serveur, d'ouvrir le navigateur, de cliquer partout... vous
 ## 🚀 Résumé pour le Débutant
 
 1.  L'utilisateur clique sur le **Site Web** (`index.xhtml`).
-2.  Le site parle au **Bean** (`BibliothequeBean`).
-3.  Le Bean appelle le **Service** (`LivreService`).
-4.  Le Service manipule les **Objets** (`Livre`, `Document`).
-5.  Les objets sont sauvegardés par **JPA** dans la Base de Données.
+2.  Le site parle au **Contrôleur** (`WebController`).
+3.  Le Contrôleur manipule directement les **Objets** (`Livre`) et les sauvegarde en **Base de Données** (via JPA).
 
 C'est cette séparation qui rend le code propre, maintenable et professionnel !

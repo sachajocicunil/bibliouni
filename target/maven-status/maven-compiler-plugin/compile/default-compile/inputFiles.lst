@@ -1,10 +1,8 @@
 /Users/jocicsacha/Documents/bibliouni2/src/main/java/com/libraryapp/Document.java
 /Users/jocicsacha/Documents/bibliouni2/src/main/java/com/libraryapp/Livre.java
-/Users/jocicsacha/Documents/bibliouni2/src/main/java/com/libraryapp/LivreService.java
 /Users/jocicsacha/Documents/bibliouni2/src/main/java/com/libraryapp/Utilisateur.java
-/Users/jocicsacha/Documents/bibliouni2/src/main/java/com/libraryapp/UtilisateurService.java
-/Users/jocicsacha/Documents/bibliouni2/src/main/java/com/libraryapp/websrv/BibliothequeBean.java
-/Users/jocicsacha/Documents/bibliouni2/src/main/java/com/libraryapp/websrv/BibliothequeService.java
-/Users/jocicsacha/Documents/bibliouni2/src/main/java/com/libraryapp/websrv/DatabaseInitializer.java
-/Users/jocicsacha/Documents/bibliouni2/src/main/java/com/libraryapp/websrv/HelloApplication.java
-/Users/jocicsacha/Documents/bibliouni2/src/main/java/com/libraryapp/websrv/HelloResource.java
+/Users/jocicsacha/Documents/bibliouni2/src/main/java/com/libraryapp/websrv/DataInit.java
+/Users/jocicsacha/Documents/bibliouni2/src/main/java/com/libraryapp/websrv/LibraryService.java
+/Users/jocicsacha/Documents/bibliouni2/src/main/java/com/libraryapp/websrv/RestApi.java
+/Users/jocicsacha/Documents/bibliouni2/src/main/java/com/libraryapp/websrv/RestConfig.java
+/Users/jocicsacha/Documents/bibliouni2/src/main/java/com/libraryapp/websrv/WebController.java

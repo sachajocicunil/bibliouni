@@ -36,33 +36,54 @@
     </style>
 </h:head>
 
+<!-- 
+        Le BODY contient ce qui s'affiche à l'écran. 
+        Les balises commençant par "h:" (comme h:form) sont des composants JSF intelligents
+        qui vont se transformer en HTML classique (form, input, table...) pour le navigateur.
+    -->
 <h:body>
-    <h1>📚 BiblioUni - Interface de Gestion</h1>
 
-    <div class="row">
-        <!-- COLONNE GAUCHE : LIVRES -->
-        <div class="column">
+    <div class="container">
+        <!-- TITRE DE LA PAGE -->
+        <div class="header">
+            <h1>📚 Ma Bibliothèque Universitaire</h1>
+            <p>Gestion simplifiée des ouvrages et des emprunts</p>
+        </div>
+
+        <!-- 
+                SECTION 1 : GESTION DES LIVRES
+                Ici, on connecte les champs texte aux variables du Java via "#{webController.variable}".
+                Quand on écrit dedans, ça remplit la variable Java magiquement !
+            -->
+        <div class="section">
             <h2>📖 Gestion des Livres</h2>
 
             <!-- Formulaire Ajout/Modif Livre -->
+            <!-- L'attribut "rendered" permet d'afficher ou cacher des blocs selon une condition Java -->
             <h:form id="livreForm">
-                <h:inputHidden value="#{bibliothequeBean.currentLivreId}" />
+                <!-- Champ caché pour savoir si on modifie (id > 0) ou on crée (id = 0) -->
+                <h:inputHidden value="#{webController.currentLivreId}" />
+
                 <h:panelGrid columns="2">
                     <h:outputLabel value="Titre :" />
-                    <h:inputText value="#{bibliothequeBean.nouveauTitre}" />
+                    <!-- value="#{webController.nouveauTitre}" : Lie ce champ à la variable Java 'nouveauTitre' -->
+                    <h:inputText value="#{webController.nouveauTitre}" />
 
                     <h:outputLabel value="Auteur :" />
-                    <h:inputText value="#{bibliothequeBean.nouveauAuteur}" />
+                    <h:inputText value="#{webController.nouveauAuteur}" />
                 </h:panelGrid>
-                <h:commandButton value="#{bibliothequeBean.currentLivreId == 0 ? 'Ajouter Livre' : 'Sauvegarder Modif'}"
-                    action="#{bibliothequeBean.enregisterLivre}" />
-            </h:form>
 
+                <!-- Le bouton déclenche la méthode 'enregisterLivre' dans le code Java -->
+                <h:commandButton value="#{webController.currentLivreId == 0 ? 'Ajouter Livre' : 'Sauvegarder Modif'}"
+                    action="#{webController.enregisterLivre}" />
+            </h:form>
             <br />
 
-            <!-- Liste des Livres -->
+            <!-- Liste des Livres (Tableau) -->
+            <!-- value="#{webController.livres}" : On boucle sur la liste renvoyée par getLivres() -->
+            <!-- var="livre" : À chaque tour de boucle, l'objet courant s'appelle 'livre' -->
             <h:form id="livreList">
-                <h:dataTable value="#{bibliothequeBean.livres}" var="livre">
+                <h:dataTable value="#{webController.livres}" var="livre">
                     <h:column>
                         <f:facet name="header">ID</f:facet>
                         #{livre.id}
@@ -77,10 +98,10 @@
                     </h:column>
                     <h:column>
                         <f:facet name="header">Actions</f:facet>
-                        <h:commandButton value="✏️" action="#{bibliothequeBean.preparerModification(livre)}" />
-                        <h:commandButton value="🗑️" action="#{bibliothequeBean.supprimerLivre(livre.id)}"
+                        <h:commandButton value="✏️" action="#{webController.preparerModification(livre)}" />
+                        <h:commandButton value="🗑️" action="#{webController.supprimerLivre(livre.id)}"
                             onclick="return confirm('Confirmer ?');" />
-                        <h:commandButton value="↩️ Rendre" action="#{bibliothequeBean.rendreLivre(livre.id)}"
+                        <h:commandButton value="↩️ Rendre" action="#{webController.rendreLivre(livre.id)}"
                             rendered="#{not livre.estDisponible}" />
                     </h:column>
                 </h:dataTable>
@@ -94,19 +115,19 @@
             <!-- Formulaire Ajout User -->
             <h:form>
                 Nom :
-                <h:inputText value="#{bibliothequeBean.nouveauNomUser}" />
-                <h:commandButton value="Créer Utilisateur" action="#{bibliothequeBean.ajouterUtilisateur}" />
+                <h:inputText value="#{webController.nouveauNomUser}" />
+                <h:commandButton value="Créer Utilisateur" action="#{webController.ajouterUtilisateur}" />
             </h:form>
 
             <br />
 
             <!-- Liste Users -->
-            <h:dataTable value="#{bibliothequeBean.utilisateurs}" var="u">
+            <h:dataTable value="#{webController.utilisateurs}" var="u">
                 <h:column>#{u.id}</h:column>
                 <h:column>#{u.nom}</h:column>
                 <h:column>
                     <h:form>
-                        <h:commandButton value="X" action="#{bibliothequeBean.supprimerUtilisateur(u.id)}" />
+                        <h:commandButton value="X" action="#{webController.supprimerUtilisateur(u.id)}" />
                     </h:form>
                 </h:column>
             </h:dataTable>
@@ -117,18 +138,18 @@
             <h:form>
                 <h:panelGrid columns="2">
                     <h:outputLabel value="Qui emprunte ?" />
-                    <h:selectOneMenu value="#{bibliothequeBean.selectedUserId}">
-                        <f:selectItems value="#{bibliothequeBean.utilisateurs}" var="user" itemValue="#{user.id}"
+                    <h:selectOneMenu value="#{webController.selectedUserId}">
+                        <f:selectItems value="#{webController.utilisateurs}" var="user" itemValue="#{user.id}"
                             itemLabel="#{user.nom}" />
                     </h:selectOneMenu>
 
                     <h:outputLabel value="Quel livre ?" />
-                    <h:selectOneMenu value="#{bibliothequeBean.selectedLivreId}">
-                        <f:selectItems value="#{bibliothequeBean.livres}" var="bk" itemValue="#{bk.id}"
+                    <h:selectOneMenu value="#{webController.selectedLivreId}">
+                        <f:selectItems value="#{webController.livres}" var="bk" itemValue="#{bk.id}"
                             itemLabel="#{bk.titre} (#{bk.estDisponible ? 'Dispo' : 'Indispo'})" />
                     </h:selectOneMenu>
                 </h:panelGrid>
-                <h:commandButton value="Valider l'Emprunt" action="#{bibliothequeBean.validerEmprunt}" />
+                <h:commandButton value="Valider l'Emprunt" action="#{webController.validerEmprunt}" />
             </h:form>
         </div>
     </div>

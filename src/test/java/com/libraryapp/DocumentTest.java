@@ -45,7 +45,7 @@ public class DocumentTest {
             doc.emprunter(user2);
         });
 
-        assertEquals("Ce document est déjà emprunté !", exception.getMessage());
+        assertEquals("Désolé ! Ce document est déjà emprunté par quelqu'un d'autre.", exception.getMessage());
         assertEquals(user1, doc.getEmprunteur(), "Le propriétaire ne doit pas changer");
     }
 

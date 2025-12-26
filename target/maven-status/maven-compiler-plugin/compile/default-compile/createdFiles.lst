@@ -1,10 +1,8 @@
-com/libraryapp/websrv/BibliothequeService.class
-com/libraryapp/websrv/HelloApplication.class
-com/libraryapp/Document.class
-com/libraryapp/websrv/BibliothequeBean.class
+com/libraryapp/websrv/DataInit.class
 com/libraryapp/Utilisateur.class
-com/libraryapp/LivreService.class
-com/libraryapp/websrv/DatabaseInitializer.class
-com/libraryapp/UtilisateurService.class
+com/libraryapp/websrv/LibraryService.class
+com/libraryapp/websrv/RestApi.class
+com/libraryapp/websrv/RestConfig.class
+com/libraryapp/websrv/WebController.class
 com/libraryapp/Livre.class
-com/libraryapp/websrv/HelloResource.class
+com/libraryapp/Document.class

@@ -3,8 +3,20 @@
              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
              xsi:schemaLocation="https://jakarta.ee/xml/ns/persistence https://jakarta.ee/xml/ns/persistence/persistence_3_0.xsd">
     
+    <!-- 
+        UNITÉ DE PERSISTANCE (PERSISTENCE UNIT)
+        C'est le nom qu'on utilise dans le code Java (@PersistenceContext(unitName = "BiblioPU"))
+        pour dire "Connecte-toi à cette base de données là".
+    -->
     <persistence-unit name="BiblioPU" transaction-type="JTA">
-        <jta-data-source>java:comp/DefaultDataSource</jta-data-source>
+        
+        <!-- 
+            SOURCE DE DONNÉES (DATA SOURCE)
+            C'est l'adresse de la base de données.
+            Ici, c'est une base de données interne au serveur (par défaut dans Wildfly/JBoss).
+            Pour un vrai projet, on mettrait l'adresse d'un serveur MySQL ou PostgreSQL ici.
+        -->
+        <jta-data-source>java:jboss/datasources/ExampleDS</jta-data-source>
         
         <!-- On liste explicitement les classes pour être sûr qu'elles sont détectées -->
         <class>com.libraryapp.Document</class>
@@ -13,7 +25,12 @@
         <exclude-unlisted-classes>true</exclude-unlisted-classes>
         
         <properties>
-            <!-- Standard Jakarta EE : On vide et on recrée la base au démarrage -->
+            <!-- 
+                Stratégie de création des tables :
+                "drop-and-create" : À chaque redémarrage, on efface tout et on recrée les tables vides.
+                C'est super pour le développement (on repart à zéro), mais DANGEREUX en production !
+                Pour garder les données, on mettrait "update" ou "none".
+            -->
             <property name="jakarta.persistence.schema-generation.database.action" value="drop-and-create"/>
             
             <!-- Script SQL supprimé car remplacé par DatabaseInitializer.java -->

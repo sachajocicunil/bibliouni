@@ -1,0 +1,10 @@
+com/libraryapp/websrv/BibliothequeService.class
+com/libraryapp/websrv/HelloApplication.class
+com/libraryapp/Document.class
+com/libraryapp/websrv/BibliothequeBean.class
+com/libraryapp/Utilisateur.class
+com/libraryapp/LivreService.class
+com/libraryapp/websrv/DatabaseInitializer.class
+com/libraryapp/UtilisateurService.class
+com/libraryapp/Livre.class
+com/libraryapp/websrv/HelloResource.class

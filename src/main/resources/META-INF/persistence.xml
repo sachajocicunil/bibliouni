@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence version="3.0" xmlns="https://jakarta.ee/xml/ns/persistence"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="https://jakarta.ee/xml/ns/persistence https://jakarta.ee/xml/ns/persistence/persistence_3_0.xsd">
+    
+    <persistence-unit name="BiblioPU" transaction-type="JTA">
+        <jta-data-source>java:comp/DefaultDataSource</jta-data-source>
+        
+        <!-- On liste explicitement les classes pour être sûr qu'elles sont détectées -->
+        <class>com.libraryapp.Document</class>
+        <class>com.libraryapp.Livre</class>
+        <class>com.libraryapp.Utilisateur</class>
+        <exclude-unlisted-classes>true</exclude-unlisted-classes>
+        
+        <properties>
+            <!-- Standard Jakarta EE : On vide et on recrée la base au démarrage -->
+            <property name="jakarta.persistence.schema-generation.database.action" value="drop-and-create"/>
+            
+            <!-- Script SQL supprimé car remplacé par DatabaseInitializer.java -->
+            <!-- <property name="jakarta.persistence.sql-load-script-source" value="META-INF/initial-data.sql"/> -->
+            
+            <!-- Props EclipseLink pour le debug -->
+            <property name="eclipselink.logging.level" value="FINE"/>
+        </properties>
+    </persistence-unit>
+</persistence>

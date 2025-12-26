@@ -1,0 +1,138 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html
+    PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://xmlns.jcp.org/jsf/html"
+    xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+<h:head>
+    <title>Ma Bibliothèque Universitaire</title>
+    <style>
+        .column {
+            float: left;
+            width: 45%;
+            padding: 10px;
+        }
+
+        .row:after {
+            content: "";
+            display: table;
+            clear: both;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</h:head>
+
+<h:body>
+    <h1>📚 BiblioUni - Interface de Gestion</h1>
+
+    <div class="row">
+        <!-- COLONNE GAUCHE : LIVRES -->
+        <div class="column">
+            <h2>📖 Gestion des Livres</h2>
+
+            <!-- Formulaire Ajout/Modif Livre -->
+            <h:form id="livreForm">
+                <h:inputHidden value="#{bibliothequeBean.currentLivreId}" />
+                <h:panelGrid columns="2">
+                    <h:outputLabel value="Titre :" />
+                    <h:inputText value="#{bibliothequeBean.nouveauTitre}" />
+
+                    <h:outputLabel value="Auteur :" />
+                    <h:inputText value="#{bibliothequeBean.nouveauAuteur}" />
+                </h:panelGrid>
+                <h:commandButton value="#{bibliothequeBean.currentLivreId == 0 ? 'Ajouter Livre' : 'Sauvegarder Modif'}"
+                    action="#{bibliothequeBean.enregisterLivre}" />
+            </h:form>
+
+            <br />
+
+            <!-- Liste des Livres -->
+            <h:form id="livreList">
+                <h:dataTable value="#{bibliothequeBean.livres}" var="livre">
+                    <h:column>
+                        <f:facet name="header">ID</f:facet>
+                        #{livre.id}
+                    </h:column>
+                    <h:column>
+                        <f:facet name="header">Titre</f:facet>
+                        #{livre.titre}
+                    </h:column>
+                    <h:column>
+                        <f:facet name="header">Dispo</f:facet>
+                        #{livre.estDisponible ? '✅' : '❌ ' += livre.emprunteur.nom}
+                    </h:column>
+                    <h:column>
+                        <f:facet name="header">Actions</f:facet>
+                        <h:commandButton value="✏️" action="#{bibliothequeBean.preparerModification(livre)}" />
+                        <h:commandButton value="🗑️" action="#{bibliothequeBean.supprimerLivre(livre.id)}"
+                            onclick="return confirm('Confirmer ?');" />
+                        <h:commandButton value="↩️ Rendre" action="#{bibliothequeBean.rendreLivre(livre.id)}"
+                            rendered="#{not livre.estDisponible}" />
+                    </h:column>
+                </h:dataTable>
+            </h:form>
+        </div>
+
+        <!-- COLONNE DROITE : UTILISATEURS & EMPRUNTS -->
+        <div class="column">
+            <h2>👤 Gestion des Utilisateurs</h2>
+
+            <!-- Formulaire Ajout User -->
+            <h:form>
+                Nom :
+                <h:inputText value="#{bibliothequeBean.nouveauNomUser}" />
+                <h:commandButton value="Créer Utilisateur" action="#{bibliothequeBean.ajouterUtilisateur}" />
+            </h:form>
+
+            <br />
+
+            <!-- Liste Users -->
+            <h:dataTable value="#{bibliothequeBean.utilisateurs}" var="u">
+                <h:column>#{u.id}</h:column>
+                <h:column>#{u.nom}</h:column>
+                <h:column>
+                    <h:form>
+                        <h:commandButton value="X" action="#{bibliothequeBean.supprimerUtilisateur(u.id)}" />
+                    </h:form>
+                </h:column>
+            </h:dataTable>
+
+            <hr />
+
+            <h2>🤝 Faire un Emprunt</h2>
+            <h:form>
+                <h:panelGrid columns="2">
+                    <h:outputLabel value="Qui emprunte ?" />
+                    <h:selectOneMenu value="#{bibliothequeBean.selectedUserId}">
+                        <f:selectItems value="#{bibliothequeBean.utilisateurs}" var="user" itemValue="#{user.id}"
+                            itemLabel="#{user.nom}" />
+                    </h:selectOneMenu>
+
+                    <h:outputLabel value="Quel livre ?" />
+                    <h:selectOneMenu value="#{bibliothequeBean.selectedLivreId}">
+                        <f:selectItems value="#{bibliothequeBean.livres}" var="bk" itemValue="#{bk.id}"
+                            itemLabel="#{bk.titre} (#{bk.estDisponible ? 'Dispo' : 'Indispo'})" />
+                    </h:selectOneMenu>
+                </h:panelGrid>
+                <h:commandButton value="Valider l'Emprunt" action="#{bibliothequeBean.validerEmprunt}" />
+            </h:form>
+        </div>
+    </div>
+
+</h:body>
+
+</html>
